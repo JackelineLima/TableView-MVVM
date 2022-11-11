@@ -8,13 +8,13 @@
 import UIKit
 
 protocol HomeViewDelegate: AnyObject {
-    func didTapCell(name: String)
+    func didTapCell(name: String, type: Nameable)
 }
 
 final class HomeView: UIView {
     
     weak var delegate: HomeViewDelegate?
-    private var races: [Races] = []
+    private var model: [Nameable] = []
     
     private lazy var tableView: UITableView = {
         let tb = UITableView()
@@ -49,8 +49,8 @@ final class HomeView: UIView {
         ])
     }
     
-    func setupRaces(races: [Races]) {
-        self.races = races
+    func setup(model: [Nameable]) {
+        self.model = model
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -60,16 +60,18 @@ final class HomeView: UIView {
 extension HomeView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return races.count
+        return model.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = races[indexPath.row].name
+        cell.textLabel?.text = model[indexPath.row].name
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate?.didTapCell(name: races[indexPath.row].name)
+        let indexPath = model[indexPath.row]
+
+        delegate?.didTapCell(name: indexPath.name, type: indexPath)
     }
 }
